@@ -1,4 +1,4 @@
 public interface ISmartHomeRepository
 {
-    Task<IEnumerable<SmartHomeInformation>> GetAllAsync();
+    Task<IEnumerable<SmartHomeInformatioModel>> GetAllAsync();
 }

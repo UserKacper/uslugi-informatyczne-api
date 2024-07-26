@@ -8,17 +8,17 @@ public class SmartHomeRepository : ISmartHomeRepository{
         this.ctx = ctx;
     }
 
-    public async Task<IEnumerable<SmartHomeInformation>> GetAllAsync() {
+    public async Task<IEnumerable<SmartHomeInformatioModel>> GetAllAsync() {
         try
         {
-            return await ctx.serviceInformation
+            return await ctx.smarthomeInformationModel
                 .OrderBy(e => e.PricingMin)
                 .ToListAsync();
         }
         catch (Exception ex)
         {
             logger.LogError(ex.Message, ex);
-            return new List<SmartHomeInformation>();
+            return new List<SmartHomeInformatioModel>();
         }
     }
 }

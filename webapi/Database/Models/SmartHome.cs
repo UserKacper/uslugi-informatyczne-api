@@ -1,11 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
-public record SmartHomeInformation
+public record SmartHomeInformatioModel
 {
     public required Guid Id { get; set; }
     public required string FullName { get; init; }
