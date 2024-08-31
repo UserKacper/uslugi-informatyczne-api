@@ -1,78 +1,41 @@
-using System.Collections;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-public class ServiceController : ControllerBase
+public class PricingController : ControllerBase
 {
-    private readonly ISmartHomeRepository _smartHomeRepository;
-    private readonly ISoftwareRepository _softwareRepository;
-    private readonly IDynamicWPRepository _dynamicWPRepository;
-    private readonly IStaticWPRepository _staticWPRepository;
-    private readonly ILogger<ServiceController> logger;
-    public ServiceController(ISoftwareRepository softwareRepository, ISmartHomeRepository smartHomeRepository, ILogger<ServiceController> logger, IDynamicWPRepository dynamicWPRepository, IStaticWPRepository staticWPRepository)
+    private readonly IPricingRepository _pricingRepository;
+    private readonly ILogger<PricingController> _logger;
+
+    private static readonly HashSet<string> RouteMappings = new()
     {
-        _softwareRepository = softwareRepository;
-        _smartHomeRepository = smartHomeRepository;
-        _dynamicWPRepository = dynamicWPRepository;
-        _staticWPRepository = staticWPRepository;
-        this.logger = logger;
-    }
-    [HttpGet("/api/smarthome")]
-    public async Task<ActionResult<IEnumerable<SmartHomeInformatioModel>>> GetAllSmarthomeInformationAsync()
+         "smarthome" ,"webapp" , "webpage" ,"mobile" ,"software"
+    };
+
+    public PricingController(IPricingRepository pricingRepository, ILogger<PricingController> logger)
     {
-        try
-        {
-            var services = await _smartHomeRepository.GetAllAsync();
-            return Ok(services);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex.Message, ex);
-            return BadRequest(ex.Message);
-        }
-    }
-    [HttpGet("/api/software")]
-    public async Task<ActionResult<IEnumerable<SmartHomeInformatioModel>>> GetAllSoftwareInformationAsync()
-    {
-        try
-        {
-            var services = await _softwareRepository.GetAllAsync();
-            return Ok(services);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex.Message, ex);
-            return BadRequest(ex.Message);
-        }
-    }
-    [HttpGet("/api/dynamic")]
-    public async Task<ActionResult<IEnumerable<SmartHomeInformatioModel>>> GetAllDynamicWPInformationAsync()
-    {
-        try
-        {
-            var services = await _dynamicWPRepository.GetAllAsync();
-            return Ok(services);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex.Message, ex);
-            return BadRequest(ex.Message);
-        }
-    }
-    [HttpGet("/api/static")]
-    public async Task<ActionResult<IEnumerable<SmartHomeInformatioModel>>> GetAllStaticWPInformationAsync()
-    {
-        try
-        {
-            var services = await _staticWPRepository.GetAllAsync();
-            return Ok(services);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex.Message, ex);
-            return BadRequest(ex.Message);
-        }
+        _pricingRepository = pricingRepository;
+        _logger = logger;
     }
 
+    [HttpGet("/api/{type}")]
+    public async Task<ActionResult<IEnumerable<PricingModel>>> GetAllPricingAsync([FromRoute] string type)
+    {
+        if (!RouteMappings.Contains(type))
+        {
+            return BadRequest("Invalid route type provided.");
+        }
+
+        IEnumerable<PricingModel> services;
+
+        try
+        {
+            services = await _pricingRepository.GetAllAsync(type);
+            return Ok(services);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while retrieving pricing models for route type '{RouteType}'.", type);
+            return StatusCode(500, "Internal server error.");
+        }
+    }
 }
-

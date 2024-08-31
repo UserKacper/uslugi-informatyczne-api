@@ -7,10 +7,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataBaseApiContext>(opt => opt.UseNpgsql(connectionString));
-builder.Services.AddScoped<ISoftwareRepository, SoftwareRepository>();
-builder.Services.AddScoped<IDynamicWPRepository, DynamicWPRepository>();
-builder.Services.AddScoped<IStaticWPRepository, StaticWPRepository>();
-builder.Services.AddScoped<ISmartHomeRepository, SmartHomeRepository>();
+builder.Services.AddScoped<IPricingRepository, PricingRepository>();
+
 
 var app = builder.Build();
 
