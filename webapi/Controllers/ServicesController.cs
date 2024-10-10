@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-
 [ApiController]
 public class PricingController : ControllerBase
 {
@@ -8,7 +7,7 @@ public class PricingController : ControllerBase
 
     private static readonly HashSet<string> RouteMappings = new()
     {
-         "smarthome" ,"webapp" , "webpage" ,"mobile" ,"software"
+         "webapp" , "webpage" ,"mobile" ,"software"
     };
 
     public PricingController(IPricingRepository pricingRepository, ILogger<PricingController> logger)
@@ -37,5 +36,22 @@ public class PricingController : ControllerBase
             _logger.LogError(ex, "An error occurred while retrieving pricing models for route type '{RouteType}'.", type);
             return StatusCode(500, "Internal server error.");
         }
+    }
+    [HttpPost("/api/mail")]
+    public async Task<ActionResult> EmailSender([FromBody] EmailModel emailModel)
+    {
+        try
+        {
+            TryValidateModel(emailModel);
+            
+            return Ok("email sent.");
+        }
+        catch (Exception ex)
+        {
+
+            _logger.LogError($"{ex.Message}", "unable to send message please try again.");
+            return  StatusCode(500, "Internal server error.");
+        }
+
     }
 }

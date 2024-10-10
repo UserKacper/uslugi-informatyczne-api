@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = "Server=127.0.0.1;Port=5432;Database=Cluster01;User Id=postgres;Password=postgres;";
+var connectionString = "Server=host.docker.internal;Port=5432;Database=Cluster01;User Id=postgres;Password=postgres;";
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -9,21 +9,37 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<DataBaseApiContext>(opt => opt.UseNpgsql(connectionString));
 builder.Services.AddScoped<IPricingRepository, PricingRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:8080")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+app.UseCors();
+
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API v1");
+    });
 }
-
-app.UseCors(options => options.AllowAnyOrigin());
 
 app.UseHttpsRedirection();
 app.MapControllers();
 
-
-app.Run();
-
-
+if (app.Environment.IsDevelopment() && !app.Environment.IsProduction())
+{
+    app.Run();
+}
+else
+{
+    app.Run("http://0.0.0.0:80");
+}
