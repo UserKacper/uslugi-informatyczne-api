@@ -27,7 +27,6 @@ public class PricingController : ControllerBase
         {
             return BadRequest("Invalid route type provided.");
         }
-
         IEnumerable<PricingModel> services;
 
         try
@@ -41,6 +40,7 @@ public class PricingController : ControllerBase
             return StatusCode(500, "Internal server error.");
         }
     }
+
     [HttpPost("/api/mail")]
     public async Task<ActionResult> EmailSender([FromBody] EmailModel emailModel)
     {
