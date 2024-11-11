@@ -47,7 +47,7 @@ public class PricingController : ControllerBase
         try
         {
             TryValidateModel(emailModel);
-            var apiKey = _configuration.GetValue<string>("EmailApi:SENDGRID_API_KEY");
+            var apiKey = _configuration["ApiKeys:SendGrid"];
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("kdeja.webdev@gmail.com", emailModel.EmailSender);
             var subject = emailModel.EmailTopic;

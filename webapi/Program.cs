@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
-
+var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+System.Console.WriteLine(connectionString);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
