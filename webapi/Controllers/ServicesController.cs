@@ -27,7 +27,6 @@ public class PricingController : ControllerBase
         {
             return BadRequest("Invalid route type provided.");
         }
-
         IEnumerable<PricingModel> services;
 
         try
@@ -41,13 +40,14 @@ public class PricingController : ControllerBase
             return StatusCode(500, "Internal server error.");
         }
     }
+
     [HttpPost("/api/mail")]
     public async Task<ActionResult> EmailSender([FromBody] EmailModel emailModel)
     {
         try
         {
             TryValidateModel(emailModel);
-            var apiKey = _configuration.GetValue<string>("EmailApi:SENDGRID_API_KEY");
+            var apiKey = _configuration["ApiKeys:SendGrid"];
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("kdeja.webdev@gmail.com", emailModel.EmailSender);
             var subject = emailModel.EmailTopic;

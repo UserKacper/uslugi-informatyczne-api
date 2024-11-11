@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = "Server=host.docker.internal;Port=5432;Database=Cluster01;User Id=postgres;Password=postgres;";
-
+var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+System.Console.WriteLine(connectionString);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
@@ -13,9 +13,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:8080")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
 

@@ -11,15 +11,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace webapi.Migrations
 {
     [DbContext(typeof(DataBaseApiContext))]
-    [Migration("20240901120229_Initial")]
-    partial class Initial
+    [Migration("20241110123155_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -30,11 +30,14 @@ namespace webapi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<string>("Documentation")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Emergency")
+                    b.Property<string>("EmergencySupport")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -42,11 +45,20 @@ namespace webapi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FullyCustomizable")
+                    b.Property<bool>("FullyCustomizable")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("HelpWithIntegration")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("HelpWithIntegration")
+                    b.Property<bool>("IsAvailable24x7")
+                        .HasColumnType("boolean");
+
+                    b.Property<string[]>("KeyFeatures")
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("Plan")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -57,13 +69,16 @@ namespace webapi.Migrations
                     b.Property<double>("PricingMin")
                         .HasColumnType("double precision");
 
+                    b.Property<int?>("ResponseTimeInHours")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("pricingModels");
+                    b.ToTable("PricingModels");
                 });
 #pragma warning restore 612, 618
         }
