@@ -1,14 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
-System.Console.WriteLine(connectionString);
+var connectionString = "Server=localhost;Port=5432;Database=cluster01;User Id=postgres;Password=postgres;";
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataBaseApiContext>(opt => opt.UseNpgsql(connectionString));
 builder.Services.AddScoped<IPricingRepository, PricingRepository>();
-
+builder.Services.AddSingleton<IAppInitization, AppInitilization>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>

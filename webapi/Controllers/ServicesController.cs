@@ -39,31 +39,6 @@ public class PricingController : ControllerBase
             _logger.LogError(ex, "An error occurred while retrieving pricing models for route type '{RouteType}'.", type);
             return StatusCode(500, "Internal server error.");
         }
-    }
-
-    [HttpPost("/api/mail")]
-    public async Task<ActionResult> EmailSender([FromBody] EmailModel emailModel)
-    {
-        try
-        {
-            TryValidateModel(emailModel);
-            var apiKey = _configuration["ApiKeys:SendGrid"];
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("kdeja.webdev@gmail.com", emailModel.EmailSender);
-            var subject = emailModel.EmailTopic;
-            var to = new EmailAddress("kdeja.webdev@gmail.com");
-            var plainTextContent = emailModel.EmailContent;
-            var htmlContent = emailModel.EmailContent;
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            var response = await client.SendEmailAsync(msg);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-
-            _logger.LogError($"{ex.Message}", "unable to send message please try again.");
-            return StatusCode(500, "Internal server error.");
-        }
 
     }
 }
