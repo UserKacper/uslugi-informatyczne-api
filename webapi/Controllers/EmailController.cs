@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.Net;
+using System.Net.NetworkInformation;
 
 [ApiController]
 public class EmailController : ControllerBase
@@ -9,25 +11,41 @@ public class EmailController : ControllerBase
     private readonly ILogger<EmailController> _logger;
     private readonly IConfiguration _configuration;
     private readonly IAppInitization _appInitization;
+    private readonly IEmailValidation _emailValidation;
 
-
-    public EmailController(ILogger<EmailController> logger, IConfiguration configuration, IAppInitization appInitization)
+    public EmailController(ILogger<EmailController> logger, IConfiguration configuration, IAppInitization appInitization, IEmailValidation emailValidation)
     {
         _logger = logger;
         _configuration = configuration;
         _appInitization = appInitization;
+        _emailValidation = emailValidation;
     }
 
     [HttpPost("/api/mail")]
-    public async Task<IActionResult> EmailSender([FromBody] EmailModel emailModel)
+    public async Task<ActionResult> EmailSender([FromBody] EmailModel emailModel)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        try
+        var ipAddress = HttpContext.Items["IpAddress"]?.ToString();
+        if (ipAddress == null)
         {
+            return StatusCode(404, "Ip Address not found");
+        }
+
+        if (!await _emailValidation.IsValidEmailAsync(emailModel.EmailSender))
+        {
+            return BadRequest("Please use a valid Email Adress");
+        }
+        if (!_emailValidation.IsRateLimitReached(ipAddress))
+        {
+            return StatusCode(429, "You have exceeded the limit of 2 emails per hour.");
+        }
+
+        try
+            {
             var apiKey = await _appInitization.AppInit();
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("kdeja.webdev@gmail.com", emailModel.EmailSender);
@@ -45,5 +63,16 @@ public class EmailController : ControllerBase
             _logger.LogError(ex, "Unable to send message, please try again.");
             return StatusCode(500, "Internal server error.");
         }
+    }
+    private string GetIpAddress()
+    {
+        var ip = Request.HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        if (Request.Headers.ContainsKey("X-Forwarded-For"))
+        {
+            ip = Request.Headers["X-Forwarded-For"].ToString().Split(',').FirstOrDefault();
+        }
+
+        return ip ?? "unknown";
     }
 }
