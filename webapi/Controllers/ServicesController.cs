@@ -25,14 +25,14 @@ public class PricingController : ControllerBase
     {
         if (!RouteMappings.Contains(type))
         {
-            return BadRequest("Invalid route type provided.");
+            return StatusCode(400,"Invalid route type provided.");
         }
         IEnumerable<PricingModel> services;
 
         try
         {
             services = await _pricingRepository.GetAllAsync(type);
-            return Ok(services);
+            return StatusCode(200,services);
         }
         catch (Exception ex)
         {

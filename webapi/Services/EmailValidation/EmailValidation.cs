@@ -1,12 +1,7 @@
 ﻿using Azure.Core;
 using DnsClient;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Linq;
-using System.Net;
 using System.Net.Mail;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 public class EmailValidation : IEmailValidation
 {
@@ -45,7 +40,7 @@ public class EmailValidation : IEmailValidation
         }
     }
 
-    public bool CanSendEmail(string ipAddress)
+    public bool IsRateLimitReached(string ipAddress)
     {
         var cacheKey = $"emailLimit_{ipAddress}";
         var requests = _memoryCache.Get<EmailRequestInfo>(cacheKey);
