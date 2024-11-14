@@ -64,15 +64,4 @@ public class EmailController : ControllerBase
             return StatusCode(500, "Internal server error.");
         }
     }
-    private string GetIpAddress()
-    {
-        var ip = Request.HttpContext.Connection.RemoteIpAddress?.ToString();
-
-        if (Request.Headers.ContainsKey("X-Forwarded-For"))
-        {
-            ip = Request.Headers["X-Forwarded-For"].ToString().Split(',').FirstOrDefault();
-        }
-
-        return ip ?? "unknown";
-    }
 }

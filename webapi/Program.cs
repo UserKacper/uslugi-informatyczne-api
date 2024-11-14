@@ -8,7 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<DataBaseApiContext>(opt => opt.UseNpgsql(connectionString));
 builder.Services.AddScoped<IPricingRepository, PricingRepository>();
 builder.Services.AddScoped<IEmailValidation, EmailValidation>();
-builder.Services.AddSingleton<IAppInitization, AppInitilization>();
+builder.Services.AddScoped<IAppInitization, AppInitilization>();
 builder.Services.AddMemoryCache();
 builder.Services.AddCors(options =>
 {
