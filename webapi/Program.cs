@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = "Server=localhost;Port=5432;Database=MyDB;User Id=postgres;Password=postgres;";
+var appInit = new AppInitilization(builder.Configuration);
+string dbConnection = await appInit.AppInit("db");
+Console.WriteLine(dbConnection);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<DataBaseApiContext>(opt => opt.UseNpgsql(connectionString));
+builder.Services.AddDbContext<DataBaseApiContext>(opt => opt.UseNpgsql(dbConnection));
 builder.Services.AddScoped<IPricingRepository, PricingRepository>();
 builder.Services.AddScoped<IEmailValidation, EmailValidation>();
 builder.Services.AddScoped<IAppInitization, AppInitilization>();

@@ -1,9 +1,6 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System.Net;
-using System.Net.NetworkInformation;
 
 [ApiController]
 public class EmailController : ControllerBase
@@ -46,7 +43,7 @@ public class EmailController : ControllerBase
 
         try
             {
-            var apiKey = await _appInitization.AppInit();
+            var apiKey = await _appInitization.AppInit("sgkey");
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("kdeja.webdev@gmail.com", emailModel.EmailSender);
             var subject = emailModel.EmailTopic;
