@@ -23,7 +23,7 @@ public class EmailController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return StatusCode(400,ModelState);
         }
 
         var ipAddress = HttpContext.Items["IpAddress"]?.ToString();
@@ -34,7 +34,7 @@ public class EmailController : ControllerBase
 
         if (!await _emailValidation.IsValidEmailAsync(emailModel.EmailSender))
         {
-            return BadRequest("Please use a valid Email Adress");
+            return StatusCode(400,"Please use a valid Email Adress");
         }
         if (!_emailValidation.IsRateLimitReached(ipAddress))
         {
@@ -53,7 +53,7 @@ public class EmailController : ControllerBase
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg);
 
-            return Ok(response);
+            return StatusCode(200,response);
         }
         catch (Exception ex)
         {

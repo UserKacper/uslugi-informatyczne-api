@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 [ApiController]
 public class PricingController : ControllerBase
 {

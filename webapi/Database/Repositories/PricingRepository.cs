@@ -36,27 +36,4 @@ class PricingRepository : IPricingRepository
         }
     }
 
-    public async Task<PricingModel> CreateAsync(PricingModel model)
-    {
-        try
-        {
-            if (model == null)
-            {
-                _logger.LogWarning("Received null PricingModel.");
-                throw new ArgumentNullException(nameof(model));
-            }
-
-            _logger.LogInformation($"Creating PricingModel: {model.FullName}");
-
-            _ctx.PricingModels.Add(model);
-            await _ctx.SaveChangesAsync();
-            return model;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while creating the PricingModel.");
-            throw;
-        }
-    }
-
 }
