@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SendGrid.Helpers.Errors;
 
 class PricingRepository : IPricingRepository
 {
@@ -35,5 +32,4 @@ class PricingRepository : IPricingRepository
             return new List<PricingModel>();
         }
     }
-
 }

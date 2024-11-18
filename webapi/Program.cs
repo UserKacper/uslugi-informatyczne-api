@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 var appInit = new AppInitilization(builder.Configuration);
 string dbConnection = await appInit.AppInit("db");
-Console.WriteLine(dbConnection);
+System.Console.WriteLine(dbConnection);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
