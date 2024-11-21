@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 var appInit = new AppInitilization(builder.Configuration);
 string dbConnection = await appInit.AppInit("db");
-System.Console.WriteLine(dbConnection);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
@@ -13,6 +12,12 @@ builder.Services.AddScoped<IPricingRepository, PricingRepository>();
 builder.Services.AddScoped<IEmailValidation, EmailValidation>();
 builder.Services.AddScoped<IAppInitization, AppInitilization>();
 builder.Services.AddMemoryCache();
+builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = (context) =>
+{
+    context.ProblemDetails.Extensions["serviceVersion"] = "";
+    context.ProblemDetails.Extensions["requestId"] = "";
+    context.ProblemDetails.Extensions["correlationId"] = "";
+});
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>

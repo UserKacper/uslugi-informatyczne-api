@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Schema;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using webapi.Database.Models;
 
 [ApiController]
 public class EmailController : ControllerBase
@@ -23,22 +25,26 @@ public class EmailController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return StatusCode(400,ModelState);
+            var errors = ModelState.Values
+        .SelectMany(v => v.Errors)
+        .Select(e => e.ErrorMessage)
+        .ToList();
+            return Problem(statusCode:StatusCodes.Status400BadRequest, detail: "Invalid input: " + string.Join("; ", errors));
         }
 
         var ipAddress = HttpContext.Items["IpAddress"]?.ToString();
         if (ipAddress == null)
         {
-            return StatusCode(404, "Ip Address not found");
+            return Problem(statusCode:StatusCodes.Status404NotFound, detail: "Ip Address not found");
         }
 
         if (!await _emailValidation.IsValidEmailAsync(emailModel.EmailSender))
         {
-            return StatusCode(400,"Please use a valid Email Adress");
+            return Problem(statusCode:StatusCodes.Status403Forbidden,detail: "Please use a valid Email Adress");
         }
         if (!_emailValidation.IsRateLimitReached(ipAddress))
         {
-            return StatusCode(429, "You have exceeded the limit of 2 emails per hour.");
+            return Problem(statusCode:StatusCodes.Status429TooManyRequests, detail: "You have exceeded the limit of 2 emails per hour.");
         }
 
         try
